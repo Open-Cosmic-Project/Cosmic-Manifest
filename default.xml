@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!-- Un repositorio por carpeta de primer nivel (decisión del 7 de noviembre de 2026).
+       `name` es el nombre real del repositorio en la organización;
+       `path` es la carpeta dentro del árbol. -->
+  <remote name="origin"
+          fetch="https://github.com/Open-Cosmic-Project"
+          revision="eventhorizon" />
+
+  <default remote="origin"
+           revision="eventhorizon"
+           sync-j="4" />
+
+  <!-- Archivos de la raíz (Cargo.toml, Cargo.lock, toolchain) -->
+  <project path="workspace" name="Cosmic-Workspace" groups="mobile,desktop-dev,milestone1">
+    <linkfile src="Cargo.toml" dest="Cargo.toml" />
+    <linkfile src="Cargo.lock" dest="Cargo.lock" />
+    <linkfile src="rust-toolchain.toml" dest="rust-toolchain.toml" />
+    <linkfile src="cargo-config" dest=".cargo" />
+  </project>
+
+  <!-- Biblioteca compartida -->
+  <project path="libs" name="Libs" groups="mobile,desktop-dev,milestone1" />
+
+  <!-- cinitd, kernel.root, clauncher, corchd, cdevd -->
+  <project path="core" name="Core" groups="launcher,mobile,desktop-dev,milestone1" />
+
+  <!-- clogd, cnotifd, cpushd, cbrokerd, cpowerd, csettingsd, cupdated, cfronterad -->
+  <project path="daemons" name="Daemons" groups="mobile,desktop-dev" />
+
+  <!-- PhanteonWM, CreationDE, cboard, cosmic-splash -->
+  <project path="ui" name="UI" groups="ui,mobile,desktop-dev" />
+
+  <!-- Gestor de paquetes -->
+  <project path="pkg" name="Pkg" groups="mobile,desktop-dev,milestone1" />
+
+  <!-- cosmic-build, cosmic-flash, cosmic-repo, fastboot, cad -->
+  <project path="tools" name="Tools" groups="desktop-dev,milestone1">
+    <linkfile src="cosmic-build/cosmic-build" dest="cosmic-build" />
+  </project>
+
+  <!-- Kernel: configuraciones y scripts (Kernel) y fork anidado (Linux, repositorio por crear).
+       El repositorio Kernel debe ignorar `linux/` en su .gitignore. -->
+  <project path="kernel" name="Kernel" groups="kernel,mobile,desktop-dev" />
+  <project path="kernel/linux" name="Linux" revision="cosmic/6.18" clone-depth="1"
+           groups="kernel,mobile,desktop-dev" />
+
+  <!-- Parches de Chromium y de Qt -->
+  <project path="patches" name="Patches" groups="ui,desktop-dev,mobile" />
+
+  <!-- Firmware y paquetes por dispositivo -->
+  <project path="device" name="Device" groups="mobile" />
+
+  <!-- SDK -->
+  <project path="sdk" name="Sdk" groups="desktop-dev" />
+
+  <!-- Documentación (mayúscula a propósito) -->
+  <project path="Docs" name="Docs" groups="desktop-dev" />
+</manifest>
