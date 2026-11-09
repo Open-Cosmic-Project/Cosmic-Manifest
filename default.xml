@@ -2,16 +2,29 @@
 <manifest>
   <!-- Un repositorio por carpeta de primer nivel (decisión del 7 de noviembre de 2026).
        `name` es el nombre real del repositorio en la organización;
-       `path` es la carpeta dentro del árbol. -->
+       `path` es la carpeta dentro del árbol.
+
+       Grupos:
+         desktop-dev  grupo de trabajo: trae TODOS los crates de Rust. El Cargo.toml
+                      lista sus miembros por patrón (core/*, daemons/*, ...), así que
+                      `cargo` necesita que esas carpetas existan aunque no se compilen.
+         milestone1   solo describe el hito 1; es una meta de compilación (default-members
+                      y `cosmic-build milestone1`), no un grupo suficiente para `cargo check`.
+         mobile       árbol para dispositivo (sin sdk, tools ni Docs).
+         kernel, ui, launcher  subconjuntos para tareas concretas. -->
   <remote name="origin"
           fetch="https://github.com/Open-Cosmic-Project"
           revision="eventhorizon" />
 
+  <!-- sync-c: solo se descarga la rama de `revision`, no todas las del repositorio.
+       La rama por defecto es temporalmente eventhorizon; después será quasar. -->
   <default remote="origin"
            revision="eventhorizon"
-           sync-j="4" />
+           sync-j="4"
+           sync-c="true" />
 
-  <!-- Archivos de la raíz (Cargo.toml, Cargo.lock, toolchain) -->
+  <!-- Archivos de la raíz (Cargo.toml, Cargo.lock, toolchain, .cargo).
+       Se editan solo en ~/Dev, nunca en el árbol sincronizado. -->
   <project path="workspace" name="Cosmic-Workspace" groups="mobile,desktop-dev,milestone1">
     <linkfile src="Cargo.toml" dest="Cargo.toml" />
     <linkfile src="Cargo.lock" dest="Cargo.lock" />
@@ -19,7 +32,7 @@
     <linkfile src="cargo-config" dest=".cargo" />
   </project>
 
-  <!-- Biblioteca compartida -->
+  <!-- Biblioteca compartida: cosmic-core, cosmic-usb -->
   <project path="libs" name="Libs" groups="mobile,desktop-dev,milestone1" />
 
   <!-- cinitd, kernel.root, clauncher, corchd, cdevd -->
@@ -31,7 +44,7 @@
   <!-- PhanteonWM, CreationDE, cboard, cosmic-splash -->
   <project path="ui" name="UI" groups="ui,mobile,desktop-dev" />
 
-  <!-- Gestor de paquetes -->
+  <!-- Gestor de paquetes: sps -->
   <project path="pkg" name="Pkg" groups="mobile,desktop-dev,milestone1" />
 
   <!-- cosmic-build, cosmic-flash, cosmic-repo, fastboot, cad -->
@@ -39,11 +52,10 @@
     <linkfile src="cosmic-build/cosmic-build" dest="cosmic-build" />
   </project>
 
-  <!-- Kernel: configuraciones y scripts (Kernel) y fork anidado (Linux, repositorio por crear).
-       El repositorio Kernel debe ignorar `linux/` en su .gitignore. -->
-  <project path="kernel" name="Kernel" groups="kernel,mobile,desktop-dev" />
-  <project path="kernel/linux" name="Linux" revision="cosmic/6.18" clone-depth="1"
-           groups="kernel,mobile,desktop-dev" />
+  <!-- Kernel: configs/, scripts/ (purge-arch.sh), UPSTREAM y linux/ (Linux 6.18 LTS
+       purgado, solo arm64 y riscv). Todo en un único repositorio.
+       clone-depth="1": no se baja el historial. -->
+  <project path="kernel" name="Kernel" clone-depth="1" groups="kernel,mobile,desktop-dev" />
 
   <!-- Parches de Chromium y de Qt -->
   <project path="patches" name="Patches" groups="ui,desktop-dev,mobile" />
